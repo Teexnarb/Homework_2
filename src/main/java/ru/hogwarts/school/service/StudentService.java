@@ -1,41 +1,52 @@
 package ru.hogwarts.school.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.hogwarts.school.exception.RecordNotFoundException;
+import ru.hogwarts.school.exception.StudentNotFoundException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
-import java.util.Collection;
+import java.util.List;
 
 @Service
 public class StudentService {
 
-    @Autowired
     private final StudentRepository studentRepository;
 
     public StudentService(StudentRepository studentRepository) {
         this.studentRepository = studentRepository;
     }
 
+    public Student getStudentById(long id) {
+        return studentRepository.findById(id).get();
+    }
 
-    public Student createStudent(Student student) {
+    public Student createStudent(String name, int age) {
+        Student student = new Student();
+        student.setName(name);
+        student.setAge(age);
         return studentRepository.save(student);
     }
 
-    public Student findStudent(long id) {
-        return studentRepository.findById(id).orElseThrow(RecordNotFoundException::new);
+    public Student updateStudent(Long id, String name, int age) {
+        Student student = new Student();
+        student.setName(name);
+        student.setAge(age);
+        studentRepository.save(student);
+        return student;
     }
 
-    public Student editStudent(Student student) {
-        return studentRepository.save(student);
-    }
-
-    public void removeStudent(long id) {
+    public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
     }
 
-    public Collection<Student> studentsByAgeBetween(Integer minAge, Integer maxAge) {
-        return studentRepository.findAllByAgeBetween(minAge, maxAge);
+    public List<Student> getStudentsByAge(int age) {
+        return studentRepository.getByAge(age);
+    }
+
+    public Faculty getFacultyByStudentId(Long Id) {
+        Student student = studentRepository.findById(Id).orElseThrow(
+                () -> new StudentNotFoundException("Student not found with id: " + Id));
+        return student.getFaculty();
     }
 }
