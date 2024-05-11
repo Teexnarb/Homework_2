@@ -1,20 +1,22 @@
 package ru.hogwarts.school.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.Id;
 
 import java.util.Objects;
 
 @Entity
 public class Student {
+
+
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
     private int age;
-
     @ManyToOne
-    @JoinColumn(name = "idfaculty")
+    @JoinColumn(name = "faculty_id")
+    @JsonBackReference
     private Faculty faculty;
 
     public Student() {
@@ -60,15 +62,15 @@ public class Student {
     }
 
     @Override
-    public boolean equals(Object object) {
-        if (this == object) return true;
-        if (!(object instanceof Student student)) return false;
-        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name) && Objects.equals(faculty, student.faculty);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Student student)) return false;
+        return age == student.age && Objects.equals(id, student.id) && Objects.equals(name, student.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, age, faculty);
+        return Objects.hash(id, name, age);
     }
 
     @Override
@@ -77,7 +79,7 @@ public class Student {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", age=" + age +
-                ", faculty=" + faculty +
                 '}';
     }
+
 }
